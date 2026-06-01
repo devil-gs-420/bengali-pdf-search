@@ -1,0 +1,61 @@
+# ── Stage 1: Build deps ─────────────────────────────────────────────────────
+FROM python:3.12-slim AS builder
+
+WORKDIR /build
+
+# System deps for building Python packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential gcc libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt
+
+# ── Stage 2: Runtime ─────────────────────────────────────────────────────────
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# System runtime deps + Tesseract OCR with Bengali language data
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    # Tesseract OCR engine
+    tesseract-ocr \
+    tesseract-ocr-ben \
+    tesseract-ocr-eng \
+    # pdf2image dependency
+    poppler-utils \
+    # PyMuPDF dependency
+    libmupdf-dev \
+    # PostgreSQL client
+    libpq5 \
+    # Image processing
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    # Fonts for proper Unicode rendering
+    fonts-noto \
+    fonts-noto-cjk \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy installed Python packages from builder
+COPY --from=builder /root/.local /root/.local
+
+# Make sure scripts in .local are usable
+ENV PATH=/root/.local/bin:$PATH
+
+# Copy application code
+COPY . .
+
+# Create required directories
+RUN mkdir -p uploads exports logs
+
+# Non-root user for security
+RUN useradd -m -u 1001 appuser && chown -R appuser:appuser /app
+USER appuser
+
+EXPOSE 8000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]

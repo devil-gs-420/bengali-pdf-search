@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-card: #172033;
+    --border: #334155;
+    --text-primary: #f1f5f9;
+    --text-muted: #94a3b8;
+    --accent: #0ea5e9;
+    --accent-hover: #38bdf8;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Hind Siliguri', 'Noto Sans Bengali', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Bengali text rendering */
+  [lang="bn"], .bengali {
+    font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;
+    line-height: 1.8;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #0f172a; }
+  ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #475569; }
+}
+
+@layer components {
+  .card {
+    @apply bg-slate-800/60 border border-slate-700/50 rounded-xl backdrop-blur-sm;
+  }
+
+  .btn-primary {
+    @apply bg-sky-500 hover:bg-sky-400 text-white font-medium px-4 py-2 rounded-lg
+           transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed
+           active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium px-4 py-2 rounded-lg
+           transition-all duration-200 active:scale-95;
+  }
+
+  .btn-danger {
+    @apply bg-red-600/80 hover:bg-red-500 text-white font-medium px-4 py-2 rounded-lg
+           transition-all duration-200 active:scale-95;
+  }
+
+  .input {
+    @apply bg-slate-900 border border-slate-700 text-slate-100 rounded-lg px-3 py-2
+           placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500/50
+           focus:border-sky-500 transition-all duration-200 w-full;
+  }
+
+  .table-row {
+    @apply border-b border-slate-700/50 hover:bg-slate-700/30 transition-colors duration-150;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-success { @apply badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/30; }
+  .badge-warning { @apply badge bg-amber-500/20 text-amber-400 border border-amber-500/30; }
+  .badge-error   { @apply badge bg-red-500/20 text-red-400 border border-red-500/30; }
+  .badge-info    { @apply badge bg-sky-500/20 text-sky-400 border border-sky-500/30; }
+  .badge-muted   { @apply badge bg-slate-600/40 text-slate-400 border border-slate-600/50; }
+
+  /* Shimmer skeleton */
+  .skeleton {
+    @apply animate-pulse bg-slate-700/50 rounded;
+  }
+
+  /* Scrollable table container */
+  .table-container {
+    @apply overflow-x-auto rounded-xl border border-slate-700/50;
+  }
+}
+
+/* Upload drop zone highlight */
+.dropzone-active {
+  border-color: #0ea5e9 !important;
+  background-color: rgba(14, 165, 233, 0.05) !important;
+}
+
+/* Progress bar animation */
+@keyframes progress-stripe {
+  from { background-position: 40px 0; }
+  to   { background-position: 0 0; }
+}
+.progress-animated {
+  background-image: linear-gradient(
+    45deg,
+    rgba(255,255,255,.1) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255,255,255,.1) 50%,
+    rgba(255,255,255,.1) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 40px 40px;
+  animation: progress-stripe 1s linear infinite;
+}
