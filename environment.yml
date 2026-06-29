@@ -9,3 +9,6 @@ dependencies:
     - flake8
     - pytest
     - pytest-asyncio
+    - sqlalchemy
+    - aiosqlite
+    - httpx
